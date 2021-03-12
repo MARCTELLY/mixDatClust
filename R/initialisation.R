@@ -11,7 +11,7 @@
 #'@return list object containing proportion vectors, means vectors, sigmas matrix
 #' alpha matrix
 #'@export
-initializeModel <- function(continuousData, categoricalData, nbClass, ITERMAX) {
+initializeModel <- function(continuousData, categoricalData, nbClass, ITERMAX, mode='random') {
   require(bayess)
 
   if(is.factor(categoricalData)){
@@ -32,19 +32,36 @@ initializeModel <- function(continuousData, categoricalData, nbClass, ITERMAX) {
   #alpha <- array(NA, data = c(ITERMAX, nbClass, nbCatLevel))
   alpha <- matrix(NA, nbClass, nbCatLevel)
 
-  ## Object initialisation
-  # gaussian model
-  prop[1,] <- rdirichlet(1, par=rep(1,nbClass))
-  mu[1,,] <- as.matrix(continuousData[sample(1:n,nbClass),])
-  for (k in 1:nbClass){
-    sigma[1,k,,] <- cov(matrix(rnorm(p*p), ncol = p))
+  # RANDOM
+  if(mode=='random'){
+    ## Object initialisation
+    # gaussian model
+    prop[1,] <- rdirichlet(1, par=rep(1,nbClass))
+    mu[1,,] <- as.matrix(continuousData[sample(1:n,nbClass),])
+    for (k in 1:nbClass){
+      sigma[1,k,,] <- cov(matrix(rnorm(p*p), ncol = p))
+      }
+
+    # Multinomial
+    alpha[,] <- rdirichlet(nbClass, par=rep(1,nbCatLevel))
+
+   #loglik
+   loglik <- array(NA, ITERMAX+1)
+   } else  if(mode=='kmeans'){
+    z=kmeans(continuousData,nbClass)$cluster
+    for (k in 1:nbClass){
+      prop[1,k] <- mean(z==k)
+      mu[1,k,] <- colMeans(continuousData[which(z==k),])
+      sigma[1,k,,] <- var(continuousData[which(z==k),])
+    }
+    # Multinomial
+    alpha[,] <- rdirichlet(nbClass, par=rep(1,nbCatLevel))
+
+    #loglik
+    loglik <- array(NA, ITERMAX+1)
+   } else {
+     stop("The selected mode is invalid, use 'random' or 'kmeans'")
   }
-
-  # Multinomial
-  alpha[,] <- rdirichlet(nbClass, par=rep(1,nbCatLevel))
-
-  #loglik
-  loglik <- array(NA, ITERMAX+1)
 
   return(list(prop = prop,
               mu = mu,

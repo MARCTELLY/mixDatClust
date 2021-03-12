@@ -11,7 +11,7 @@
 #' @export
 #' @exemple
 #' > data <-iris
-#' > runEMAlgoritm(data,3,10)
+#' > runEMAlgorithm(data,3,10)
 #' > res <- runEMAlgoritm(data,3,10)
 #' > plot(res$loglik,type='l',main=paste('max loglik :',max(res$loglik)),cex.main=0.8)
 #' > plot(data,col=res$class)
@@ -20,7 +20,7 @@
 #' setosa      0  0 50
 #' versicolor  2 48  0
 #'
-runEMAlgoritm <- function(data, nbClass, ITERMAX, mode = "random"){
+runEMAlgorithm <- function(data, nbClass, ITERMAX, mode = "random"){
   # Split of data
   # In this step data are split in 2 dataset continous and categorical
   dataset <- splitDatasetIntoCatAndConti(data)
@@ -29,25 +29,17 @@ runEMAlgoritm <- function(data, nbClass, ITERMAX, mode = "random"){
   continousData <- dataset$continuousMat
   # Initialization
   # Creation of objects that will contain parameters of models
-  if(mode == "random"){
     ## initialization of random model
     init <- initializeModel(continuousData=continousData,
                             categoricalData=categoricalData,
                             nbClass=nbClass,
-                            ITERMAX = ITERMAX)
+                            ITERMAX = ITERMAX,
+                            mode = mode)
     prop <- init$prop
     mu <- init$mu
     sigma <- init$sigma
     alpha <- init$alpha
     loglik <- init$loglik
-
-
-  } else if(mode == "kmeans"){
-    ## initialization of kmeans model
-    # TODO: implementer l'initialtion kmeans
-  } else {
-   stop("The selected mode is invalid")
-  }
 
 
   # Beggin of loops
