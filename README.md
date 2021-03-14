@@ -1,4 +1,7 @@
 # mixDatClust
+## Authors
+* F. Jakubowsky
+* G. MBERI KONGO
 ## Run code 
 ```
 library(mixDatClust)
