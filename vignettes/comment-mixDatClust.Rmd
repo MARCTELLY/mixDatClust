@@ -1,0 +1,32 @@
+---
+title: "comment-mixDatClust"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{comment-mixDatClust}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+# Importation de la librairie
+```{r setup}
+library(mixDatClust)
+
+```
+
+Une fois importé pour lancer le clustering il suffit de lancer la function
+```{r}
+# lancement de l'algorime
+res <- runEMAlgorithm(iris, 2, 10, mode = "random")
+```
+Récuperer ensuite les résulats pour les ploter
+
+```{r}
+plotResult(iris, res)
+```
+On obtient alors des plots du clustering et l'évolution des paramètres
